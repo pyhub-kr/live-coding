@@ -1,0 +1,9 @@
+django==4.2.1
+django-environ==0.10.0
+openai==0.27.6
+django-bootstrap5==23.1
+requests
+beautifulsoup4
+
+channels[daphne]~=4.0.0
+
