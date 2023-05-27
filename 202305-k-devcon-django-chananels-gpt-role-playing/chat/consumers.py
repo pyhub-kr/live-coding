@@ -12,6 +12,7 @@ class RolePlayingConsumer(JsonWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.gpt_messages: List[GptMessage] = []
+        self.recommend_message = ""
 
     def connect(self):
         room = self.get_room()
@@ -21,7 +22,7 @@ class RolePlayingConsumer(JsonWebsocketConsumer):
             self.accept()
 
             self.gpt_messages = room.get_initial_messages()
-            # TODO: self._gpt_messages 기반으로 gpt api 호출.
+            self.recommend_message = room.get_recommend_message()
 
             assistant_message = self.gpt_query()
             self.send_json(
@@ -38,6 +39,14 @@ class RolePlayingConsumer(JsonWebsocketConsumer):
                 {
                     "type": "assistant-message",
                     "message": assistant_message,
+                }
+            )
+        elif content_dict["type"] == "request-recommend-message":
+            recommended_message = self.gpt_query(command_query=self.recommend_message)
+            self.send_json(
+                {
+                    "type": "recommended-message",
+                    "message": recommended_message,
                 }
             )
         else:
