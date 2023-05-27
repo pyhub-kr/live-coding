@@ -12,8 +12,19 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
+from environ import Env
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+env = Env()
+
+# .env 경로에 파일이 있으면, 환경변수로서 읽어들입니다.
+env_path: Path = BASE_DIR / ".env"
+if env_path.exists():
+    with env_path.open("rt", encoding="utf-8") as f:
+        env.read_env(f, overwrite=True)
 
 
 # Quick-start development settings - unsuitable for production
@@ -31,12 +42,15 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "chat",
+    "django_bootstrap5",
 ]
 
 MIDDLEWARE = [
@@ -68,6 +82,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "mysite.wsgi.application"
+ASGI_APPLICATION = "mysite.asgi.application"
 
 
 # Database
@@ -121,3 +136,16 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# OpenAI API key
+# https://platform.openai.com/account/api-keys
+# default 인자를 지정하지 않았기에, 지정 환경변수가 없으면 ImproperlyConfigured 예외가 발생합니다.
+
+OPENAI_API_KEY = env.str("OPENAI_API_KEY")
+
+
+BOOTSTRAP5 = {
+    "required_css_class": "fw-bold",
+    "set_placeholder": False,
+}
