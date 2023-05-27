@@ -3,6 +3,7 @@ from typing import TypedDict, Literal, List
 from django.conf import settings
 from django.core.validators import MinLengthValidator
 from django.db import models
+from django.urls import reverse
 
 
 class GptMessage(TypedDict):
@@ -57,6 +58,9 @@ class RolePlayingRoom(models.Model):
         verbose_name="GPT 역할 (영문)",
         help_text="GPT 프롬프트에 직접적으로 활용됩니다. 비워두시면, 자동으로 번역됩니다.",
     )
+
+    def get_absolute_url(self):
+        return reverse("role_playing_room_detail", args=[self.pk])
 
     def get_initial_messages(self) -> List[GptMessage]:
         gpt_name = "RolePlayingBot"
